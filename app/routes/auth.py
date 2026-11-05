@@ -20,6 +20,7 @@ from flask_jwt_extended import (
 from app.models import User, DamageReport
 from datetime import datetime
 from decimal import Decimal, InvalidOperation
+from app.models import User, DamageReport, Scheme
 
 auth = Blueprint('auth', __name__)
 
@@ -292,3 +293,87 @@ def my_reports():
         user=user,
         reports=reports
     )    
+    
+@auth.route('/admin/add-scheme', methods=['GET', 'POST'])
+@jwt_required()
+def add_scheme():
+
+    user_id = get_jwt_identity()
+    current_user = User.query.get_or_404(int(user_id))
+
+    if current_user.role != 'admin':
+        return "Access Denied", 403
+
+    if request.method == 'POST':
+
+        scheme_name = request.form.get('scheme_name', '').strip()
+        description = request.form.get('description', '').strip()
+        eligibility = request.form.get('eligibility', '').strip()
+        required_documents = request.form.get('required_documents', '').strip()
+        official_link = request.form.get('official_link', '').strip()
+
+        if not scheme_name or not description:
+            flash('Scheme name and description are required!', 'danger')
+
+        else:
+            new_scheme = Scheme(
+                scheme_name=scheme_name,
+                description=description,
+                eligibility=eligibility,
+                required_documents=required_documents,
+                official_link=official_link,
+                status=True
+            )
+
+            db.session.add(new_scheme)
+            db.session.commit()
+
+            flash('Government scheme added successfully!', 'success')
+            return redirect(url_for('auth.add_scheme'))
+
+    return render_template(
+        'admin/add_scheme.html',
+        csrf_token=get_jwt()['csrf']
+    )    
+    
+@auth.route('/admin/manage-schemes')
+@jwt_required()
+def manage_schemes():
+
+    user_id = get_jwt_identity()
+    current_user = User.query.get_or_404(int(user_id))
+
+    if current_user.role != 'admin':
+        return "Access Denied", 403
+
+    schemes = Scheme.query.order_by(
+        Scheme.scheme_id.desc()
+    ).all()
+
+    return render_template(
+        'admin/manage_schemes.html',
+        schemes=schemes,
+        csrf_token=get_jwt()['csrf']
+    )    
+    
+@auth.route('/admin/toggle-scheme/<int:scheme_id>', methods=['POST'])
+@jwt_required()
+def toggle_scheme(scheme_id):
+
+    user_id = get_jwt_identity()
+    current_user = User.query.get_or_404(int(user_id))
+
+    if current_user.role != 'admin':
+        return "Access Denied", 403
+
+    scheme = Scheme.query.get_or_404(scheme_id)
+
+    scheme.status = not scheme.status
+    db.session.commit()
+
+    if scheme.status:
+        flash('Scheme activated successfully!', 'success')
+    else:
+        flash('Scheme deactivated successfully!', 'warning')
+
+    return redirect(url_for('auth.manage_schemes'))    
