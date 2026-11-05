@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JanSahay - Admin Dashboard</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+          rel="stylesheet">
+</head>
+
+<body class="bg-light">
+
+<!-- Navbar -->
+<nav class="navbar navbar-dark bg-dark">
+    <div class="container">
+        <a class="navbar-brand fw-bold" href="#">JanSahay</a>
+
+        <div class="d-flex align-items-center gap-3">
+            <span class="text-white">Admin Panel</span>
+
+            <form action="{{ url_for('auth.logout') }}" method="POST">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                <button type="submit" class="btn btn-light btn-sm">
+                    Logout
+                </button>
+            </form>
+        </div>
+    </div>
+</nav>
+
+<!-- Main Content -->
+<div class="container mt-5">
+
+    <h2>Welcome, {{ user.full_name }}!</h2>
+
+    <p class="text-muted">
+        Welcome to the JanSahay Administration Dashboard.
+        Manage schemes, users and applications.
+    </p>
+
+    <!-- Dashboard Cards -->
+    <div class="row mt-4">
+
+        <div class="col-md-4 mb-3">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+                    <h5 class="card-title">Manage Schemes</h5>
+                    <p class="card-text">
+                        Add, update and manage government scheme information.
+                    </p>
+                    <button class="btn btn-dark" disabled>
+                        Manage Schemes - Coming Soon
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4 mb-3">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+                    <h5 class="card-title">Manage Users</h5>
+                    <p class="card-text">
+                        View registered citizens and manage officer accounts.
+                    </p>
+                    <a href="{{ url_for('auth.create_officer') }}" class="btn btn-dark">
+                        Create Officer Account
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4 mb-3">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+                    <h5 class="card-title">Applications</h5>
+                    <p class="card-text">
+                        Monitor submitted applications and their progress.
+                    </p>
+                    <button class="btn btn-dark" disabled>
+                        View Applications - Coming Soon
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="alert alert-warning mt-4">
+        <strong>Admin Access:</strong>
+        You have administrative access to the JanSahay prototype.
+    </div>
+
+</div>
+
+</body>
+</html>
