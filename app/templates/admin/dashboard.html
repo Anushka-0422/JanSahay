@@ -21,9 +21,10 @@
 
             <form action="{{ url_for('auth.logout') }}" method="POST">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
-                <button type="submit" class="btn btn-light btn-sm">
-                    Logout
-                </button>
+                <form action="{{ url_for('auth.logout') }}" method="POST">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                    <button type="submit" class="btn btn-danger">Logout</button>
+                </form>
             </form>
         </div>
     </div>
@@ -77,9 +78,9 @@
                     <p class="card-text">
                         Monitor submitted applications and their progress.
                     </p>
-                    <button class="btn btn-dark" disabled>
-                        View Applications - Coming Soon
-                    </button>
+                    <a href="{{ url_for('auth.admin_applications') }}" class="btn btn-dark">
+                        View Applications
+                    </a>
                 </div>
             </div>
         </div>

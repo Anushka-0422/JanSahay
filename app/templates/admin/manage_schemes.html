@@ -77,6 +77,10 @@
                     value="{{ csrf_token }}"
                   />
 
+                  <a href="{{ url_for('auth.edit_scheme', scheme_id=scheme.scheme_id) }}" class="btn btn-sm btn-primary mb">
+                    Edit
+                  </a>
+
                   {% if scheme.status %}
                   <button type="submit" class="btn btn-sm btn-danger">
                     Deactivate

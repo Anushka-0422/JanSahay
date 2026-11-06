@@ -54,3 +54,6 @@ class Application(db.Model):
     status = db.Column(db.String(30), default='Pending')
     remarks = db.Column(db.Text)
     applied_at = db.Column(db.DateTime, default=datetime.utcnow)
+    report = db.relationship('DamageReport', backref='applications')
+    scheme = db.relationship('Scheme', backref='applications')
+    officer = db.relationship('User', foreign_keys=[officer_id])

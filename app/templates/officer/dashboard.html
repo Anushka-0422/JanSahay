@@ -49,9 +49,9 @@
                     <p class="card-text">
                         View damage reports submitted by citizens.
                     </p>
-                    <button class="btn btn-success" disabled>
-                        View Reports - Coming Soon
-                    </button>
+                    <a href="{{ url_for('auth.officer_damage_reports') }}" class="btn btn-success">
+                        View Damage Reports
+                    </a>
                 </div>
             </div>
         </div>
@@ -63,9 +63,9 @@
                     <p class="card-text">
                         Review applications and update their status.
                     </p>
-                    <button class="btn btn-success" disabled>
-                        Review Applications - Coming Soon
-                    </button>
+                    <a href="{{ url_for('auth.officer_applications') }}" class="btn btn-success">
+                        View Applications
+                    </a>
                 </div>
             </div>
         </div>

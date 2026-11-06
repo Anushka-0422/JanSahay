@@ -16,6 +16,7 @@
     <div class="container">
         <a class="navbar-brand fw-bold" href="#">JanSahay</a>
         <div class="d-flex align-items-center gap-3">
+            
     <span class="text-white">Citizen Panel</span>
 
     <form action="{{ url_for('auth.logout') }}" method="POST">
@@ -50,6 +51,9 @@
                     <a href="{{ url_for('auth.my_reports') }}" class="btn btn-success">
                         View My Reports
                     </a>
+                    <a href="{{ url_for('auth.my_applications') }}" class="btn btn-success">
+                        My Applications
+                    </a>
                 </div>
             </div>
         </div>
@@ -59,9 +63,9 @@
                 <div class="card-body">
                     <h5>Government Schemes</h5>
                     <p>Explore available government schemes.</p>
-                    <button class="btn btn-success" disabled>
-                        Coming Soon
-                    </button>
+                    <a href="{{ url_for('auth.view_schemes') }}" class="btn btn-primary">
+                        View Government Schemes
+                    </a>
                 </div>
             </div>
         </div>

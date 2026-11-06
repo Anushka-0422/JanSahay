@@ -20,7 +20,7 @@ from flask_jwt_extended import (
 from app.models import User, DamageReport
 from datetime import datetime
 from decimal import Decimal, InvalidOperation
-from app.models import User, DamageReport, Scheme
+from app.models import User, DamageReport, Scheme, Application
 
 auth = Blueprint('auth', __name__)
 
@@ -148,8 +148,9 @@ def admin_dashboard():
     
     return render_template(
         'admin/dashboard.html',
-        user=user
-    )  
+        user=user,
+        csrf_token=get_jwt()['csrf']
+    ) 
     
 @auth.route('/admin/create-officer', methods=['GET', 'POST'])
 @jwt_required()
@@ -377,3 +378,255 @@ def toggle_scheme(scheme_id):
         flash('Scheme deactivated successfully!', 'warning')
 
     return redirect(url_for('auth.manage_schemes'))    
+
+@auth.route('/admin/edit-scheme/<int:scheme_id>', methods=['GET', 'POST'])
+@jwt_required()
+def edit_scheme(scheme_id):
+
+    user_id = get_jwt_identity()
+    current_user = User.query.get_or_404(int(user_id))
+
+    if current_user.role != 'admin':
+        return "Access Denied", 403
+
+    scheme = Scheme.query.get_or_404(scheme_id)
+
+    if request.method == 'POST':
+
+        scheme.scheme_name = request.form.get('scheme_name', '').strip()
+        scheme.description = request.form.get('description', '').strip()
+        scheme.eligibility = request.form.get('eligibility', '').strip()
+        scheme.required_documents = request.form.get('required_documents', '').strip()
+        scheme.official_link = request.form.get('official_link', '').strip()
+
+        if not scheme.scheme_name or not scheme.description:
+            flash('Scheme name and description are required!', 'danger')
+        else:
+            db.session.commit()
+            flash('Scheme updated successfully!', 'success')
+            return redirect(url_for('auth.manage_schemes'))
+
+    return render_template(
+        'admin/edit_scheme.html',
+        scheme=scheme,
+        csrf_token=get_jwt()['csrf']
+    )
+    
+@auth.route('/citizen/schemes')
+@jwt_required()
+def view_schemes():
+
+    user_id = get_jwt_identity()
+    current_user = User.query.get_or_404(int(user_id))
+
+    if current_user.role != 'citizen':
+        return "Access Denied", 403
+
+    schemes = Scheme.query.filter_by(
+        status=True
+    ).order_by(
+        Scheme.scheme_id.desc()
+    ).all()
+
+    return render_template(
+        'citizen/view_schemes.html',
+        user=current_user,
+        schemes=schemes
+    )    
+    
+@auth.route('/citizen/apply/<int:scheme_id>', methods=['GET', 'POST'])
+@jwt_required()
+def apply_scheme(scheme_id):
+
+    user_id = get_jwt_identity()
+    current_user = User.query.get_or_404(int(user_id))
+
+    if current_user.role != 'citizen':
+        return "Access Denied", 403
+
+    scheme = Scheme.query.filter_by(
+        scheme_id=scheme_id,
+        status=True
+    ).first_or_404()
+
+    reports = DamageReport.query.filter_by(
+        user_id=current_user.user_id
+    ).all()
+
+    if request.method == 'POST':
+
+        report_id = request.form.get('report_id')
+
+        report = DamageReport.query.filter_by(
+            report_id=report_id,
+            user_id=current_user.user_id
+        ).first()
+
+        if not report:
+            flash('Please select a valid damage report!', 'danger')
+
+        else:
+            existing_application = Application.query.filter_by(
+                report_id=report.report_id,
+                scheme_id=scheme.scheme_id
+            ).first()
+
+            if existing_application:
+                flash('You have already applied for this scheme using this report!', 'warning')
+
+            else:
+                application = Application(
+                    report_id=report.report_id,
+                    scheme_id=scheme.scheme_id,
+                    status='Pending'
+                )
+
+                db.session.add(application)
+                db.session.commit()
+
+                flash('Scheme application submitted successfully!', 'success')
+                return redirect(url_for('auth.view_schemes'))
+
+    return render_template(
+        'citizen/apply_scheme.html',
+        scheme=scheme,
+        reports=reports,
+        csrf_token=get_jwt()['csrf']
+    )   
+    
+@auth.route('/citizen/my-applications')
+@jwt_required()
+def my_applications():
+
+    user_id = get_jwt_identity()
+    current_user = User.query.get_or_404(int(user_id))
+
+    if current_user.role != 'citizen':
+        return "Access Denied", 403
+
+    applications = (
+        Application.query
+        .join(DamageReport, Application.report_id == DamageReport.report_id)
+        .join(Scheme, Application.scheme_id == Scheme.scheme_id)
+        .filter(DamageReport.user_id == current_user.user_id)
+        .order_by(Application.applied_at.desc())
+        .all()
+    )
+
+    return render_template(
+        'citizen/my_applications.html',
+        applications=applications
+    )
+    
+@auth.route('/officer/damage-reports')
+@jwt_required()
+def officer_damage_reports():
+
+    user_id = get_jwt_identity()
+    current_user = User.query.get_or_404(int(user_id))
+
+    if current_user.role != 'officer':
+        return "Access Denied", 403
+
+    reports = (
+        db.session.query(DamageReport, User)
+        .join(User, DamageReport.user_id == User.user_id)
+        .order_by(DamageReport.created_at.desc())
+        .all()
+    )
+
+    return render_template(
+        'officer/damage_reports.html',
+        reports=reports
+    )
+    
+@auth.route('/officer/applications')
+@jwt_required()
+def officer_applications():
+
+    user_id = get_jwt_identity()
+    current_user = User.query.get_or_404(int(user_id))
+
+    if current_user.role != 'officer':
+        return "Access Denied", 403
+
+    applications = (
+        db.session.query(Application, DamageReport, Scheme, User)
+        .join(DamageReport, Application.report_id == DamageReport.report_id)
+        .join(Scheme, Application.scheme_id == Scheme.scheme_id)
+        .join(User, DamageReport.user_id == User.user_id)
+        .order_by(Application.applied_at.desc())
+        .all()
+    )
+
+    return render_template(
+        'officer/applications.html',
+        applications=applications
+    )
+    
+@auth.route('/officer/review-application/<int:application_id>', methods=['GET', 'POST'])
+@jwt_required()
+def review_application(application_id):
+
+    user_id = get_jwt_identity()
+    current_user = User.query.get_or_404(int(user_id))
+
+    if current_user.role != 'officer':
+        return "Access Denied", 403
+
+    application = Application.query.get_or_404(application_id)
+
+    report = DamageReport.query.get_or_404(application.report_id)
+    citizen = User.query.get_or_404(report.user_id)
+    scheme = Scheme.query.get_or_404(application.scheme_id)
+
+    if request.method == 'POST':
+
+        status = request.form.get('status')
+        remarks = request.form.get('remarks', '').strip()
+
+        if status not in ['Pending', 'Approved', 'Rejected']:
+            flash('Invalid application status!', 'danger')
+
+        else:
+            application.status = status
+            application.remarks = remarks
+            application.officer_id = current_user.user_id
+
+            db.session.commit()
+
+            flash('Application reviewed successfully!', 'success')
+            return redirect(url_for('auth.officer_applications'))
+
+    return render_template(
+        'officer/review_application.html',
+        application=application,
+        report=report,
+        citizen=citizen,
+        scheme=scheme,
+        csrf_token=get_jwt()['csrf']
+    )
+    
+@auth.route('/admin/applications')
+@jwt_required()
+def admin_applications():
+
+    user_id = get_jwt_identity()
+    current_user = User.query.get_or_404(int(user_id))
+
+    if current_user.role != 'admin':
+        return "Access Denied", 403
+
+    applications = (
+        db.session.query(Application, DamageReport, Scheme, User)
+        .join(DamageReport, Application.report_id == DamageReport.report_id)
+        .join(Scheme, Application.scheme_id == Scheme.scheme_id)
+        .join(User, DamageReport.user_id == User.user_id)
+        .order_by(Application.applied_at.desc())
+        .all()
+    )
+
+    return render_template(
+        'admin/applications.html',
+        applications=applications
+    )                     
