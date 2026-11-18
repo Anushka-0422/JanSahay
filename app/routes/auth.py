@@ -24,17 +24,31 @@ from app.models import User, DamageReport, Scheme, Application
 
 auth = Blueprint('auth', __name__)
 
-
+import re
 @auth.route('/signup', methods=['GET', 'POST'])
 def signup():
 
     if request.method == 'POST':
 
-        full_name = request.form.get('full_name')
-        email = request.form.get('email')
-        password = request.form.get('password')
-        phone = request.form.get('phone')
-        district = request.form.get('district')
+        full_name = request.form.get('full_name', '').strip()
+        email = request.form.get('email', '').strip().lower()
+        password = request.form.get('password', '')
+        phone = request.form.get('phone', '').strip()
+        district = request.form.get('district', '').strip()
+
+        # Email validation
+        email_pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
+
+        if not re.fullmatch(email_pattern, email):
+            flash('Please enter a valid email address!', 'danger')
+            return redirect(url_for('auth.signup'))
+
+        # Indian mobile number validation
+        phone_pattern = r'^[6-9][0-9]{9}$'
+
+        if not re.fullmatch(phone_pattern, phone):
+            flash('Please enter a valid 10-digit mobile number!', 'danger')
+            return redirect(url_for('auth.signup'))
 
         # Check if email already exists
         existing_user = User.query.filter_by(email=email).first()
@@ -107,8 +121,9 @@ def login():
 def dashboard():
 
     user_id = get_jwt_identity()
-
     user = User.query.get_or_404(int(user_id))
+
+    # get_flashed_messages()  # Consume old flash messages
 
     return render_template(
         'citizen/dashboard.html',
@@ -126,12 +141,13 @@ def officer_dashboard():
     if user.role != 'officer':
         return "Access Denied", 403
 
-    return render_template(
-    'officer/dashboard.html',
-    user=user,
-    csrf_token=get_jwt()['csrf']
-)
+    get_flashed_messages()  # Consume old flash messages
 
+    return render_template(
+        'officer/dashboard.html',
+        user=user,
+        csrf_token=get_jwt()['csrf']
+    )
 
 @auth.route('/admin/dashboard')
 @jwt_required()
@@ -472,7 +488,10 @@ def apply_scheme(scheme_id):
             ).first()
 
             if existing_application:
-                flash('You have already applied for this scheme using this report!', 'warning')
+                flash(
+                    'You have already applied for this scheme using this report!',
+                    'warning'
+                )
 
             else:
                 application = Application(
@@ -484,8 +503,8 @@ def apply_scheme(scheme_id):
                 db.session.add(application)
                 db.session.commit()
 
-                flash('Scheme application submitted successfully!', 'success')
-                return redirect(url_for('auth.view_schemes'))
+                flash('You applied for the scheme successfully!', 'success')
+                return redirect(url_for('auth.my_applications'))
 
     return render_template(
         'citizen/apply_scheme.html',

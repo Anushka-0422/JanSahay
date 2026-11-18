@@ -3,29 +3,213 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>Government Schemes | JanSahay</title>
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+          rel="stylesheet">
+
+    <style>
+        body {
+            background-color: #f4f7fb;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        .navbar {
+            background-color: #102b50;
+            padding: 14px 0;
+        }
+
+        .navbar-brand {
+            font-size: 21px;
+            font-weight: 700;
+        }
+
+        .btn-nav {
+            background-color: white;
+            color: #102b50;
+            border-radius: 8px;
+            padding: 8px 15px;
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        .btn-nav:hover {
+            background-color: #e5edf7;
+            color: #102b50;
+        }
+
+        .page-header {
+            background: linear-gradient(135deg, #102b50, #24558a);
+            color: white;
+            padding: 25px 30px;
+            border-radius: 13px;
+            margin: 30px auto;
+        }
+
+        .page-header h2 {
+            font-weight: 700;
+            margin-bottom: 7px;
+        }
+
+        .page-header p {
+            color: #e1eaf5;
+            margin-bottom: 0;
+        }
+
+        .scheme-card {
+            background: white;
+            border: none;
+            border-radius: 13px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            height: 100%;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .scheme-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 22px rgba(16, 43, 80, 0.10);
+        }
+
+        .scheme-card .card-body {
+            padding: 25px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .scheme-title {
+            color: #102b50;
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 18px;
+        }
+
+        .detail-label {
+            color: #102b50;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .detail-text {
+            color: #526174;
+            font-size: 14px;
+            line-height: 1.6;
+            white-space: pre-line;
+            overflow-wrap: anywhere;
+        }
+
+        .scheme-divider {
+            border-color: #e5eaf1;
+            margin: 15px 0;
+        }
+
+        .scheme-actions {
+            margin-top: auto;
+            padding-top: 20px;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .btn-apply {
+            background-color: #102b50;
+            color: white;
+            border: 1px solid #102b50;
+            border-radius: 8px;
+            padding: 9px 17px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: 0.25s ease;
+        }
+
+        .btn-apply:hover {
+            background-color: #24558a;
+            border-color: #24558a;
+            color: white;
+        }
+
+        .btn-official {
+            background-color: white;
+            color: #102b50;
+            border: 1px solid #102b50;
+            border-radius: 8px;
+            padding: 9px 17px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: 0.25s ease;
+        }
+
+        .btn-official:hover {
+            background-color: #e8eef6;
+            color: #102b50;
+        }
+
+        .empty-state {
+            background: white;
+            border-radius: 13px;
+            padding: 40px 20px;
+            text-align: center;
+            color: #64748b;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.04);
+        }
+
+        .empty-state h5 {
+            color: #102b50;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 25px 0 15px;
+            color: #64748b;
+            font-size: 13px;
+        }
+
+        @media (max-width: 576px) {
+            .page-header {
+                padding: 22px;
+            }
+
+            .scheme-card .card-body {
+                padding: 20px;
+            }
+
+            .scheme-actions {
+                flex-direction: column;
+            }
+
+            .scheme-actions a {
+                text-align: center;
+                width: 100%;
+            }
+        }
+    </style>
 </head>
 
-<body class="bg-light">
+<body>
 
-<nav class="navbar navbar-dark bg-primary">
+<nav class="navbar navbar-dark">
     <div class="container">
+
         <a class="navbar-brand" href="{{ url_for('auth.dashboard') }}">
             JanSahay
         </a>
 
         <a href="{{ url_for('auth.dashboard') }}"
-           class="btn btn-light btn-sm">
-            Back to Dashboard
+           class="btn-nav">
+            Dashboard
         </a>
+
     </div>
 </nav>
 
-<div class="container mt-4">
+<div class="container mb-5">
 
-    <h2 class="mb-4">Available Government Schemes</h2>
+    <div class="page-header">
+        <h2>Available Government Schemes</h2>
+        <p>Explore government assistance schemes and check their eligibility requirements.</p>
+    </div>
 
     {% if schemes %}
 
@@ -33,43 +217,58 @@
 
             {% for scheme in schemes %}
 
-            <div class="col-md-6 mb-4">
+            <div class="col-lg-6 col-md-6 mb-4">
 
-                <div class="card shadow-sm h-100">
+                <div class="card scheme-card">
 
                     <div class="card-body">
 
-                        <h5 class="card-title text-primary">
+                        <h5 class="scheme-title">
                             {{ scheme.scheme_name }}
                         </h5>
 
-                        <p>
-                            <strong>Description:</strong><br>
-                            {{ scheme.description }}
-                        </p>
+                        <div>
+                            <div class="detail-label">Description</div>
+                            <div class="detail-text">
+                                {{ scheme.description }}
+                            </div>
+                        </div>
 
-                        <p>
-                            <strong>Eligibility Criteria:</strong><br>
-                            {{ scheme.eligibility or 'Not specified' }}
-                        </p>
+                        <hr class="scheme-divider">
 
-                        <p>
-                            <strong>Required Documents:</strong><br>
-                            {{ scheme.required_documents or 'Not specified' }}
-                        </p>
+                        <div>
+                            <div class="detail-label">Eligibility Criteria</div>
+                            <div class="detail-text">
+                                {{ scheme.eligibility or 'Not specified' }}
+                            </div>
+                        </div>
 
-                        {% if scheme.official_link %}
-                            <a href="{{ scheme.official_link }}"
-                               target="_blank"
-                               rel="noopener noreferrer"
-                               class="btn btn-outline-primary btn-sm">
-                                Official Website
+                        <hr class="scheme-divider">
+
+                        <div>
+                            <div class="detail-label">Required Documents</div>
+                            <div class="detail-text">
+                                {{ scheme.required_documents or 'Not specified' }}
+                            </div>
+                        </div>
+
+                        <div class="scheme-actions">
+
+                            {% if scheme.official_link %}
+                                <a href="{{ scheme.official_link }}"
+                                   target="_blank"
+                                   rel="noopener noreferrer"
+                                   class="btn-official">
+                                    Official Website ↗
+                                </a>
+                            {% endif %}
+
+                            <a href="{{ url_for('auth.apply_scheme', scheme_id=scheme.scheme_id) }}"
+                               class="btn-apply">
+                                Apply Now →
                             </a>
-                        {% endif %}
 
-                        <a href="{{ url_for('auth.apply_scheme', scheme_id=scheme.scheme_id) }}" class="btn btn-success btn-sm">
-                            Apply Now
-                        </a>
+                        </div>
 
                     </div>
 
@@ -83,13 +282,21 @@
 
     {% else %}
 
-        <div class="alert alert-info">
-            No active government schemes are currently available.
+        <div class="empty-state">
+            <h5>No Active Schemes Available</h5>
+            <p class="mb-0">
+                No active government schemes are currently available.
+                Please check again later.
+            </p>
         </div>
 
     {% endif %}
 
 </div>
+
+<footer class="footer">
+    JanSahay | Maharashtra Citizen Assistance Portal
+</footer>
 
 </body>
 </html>

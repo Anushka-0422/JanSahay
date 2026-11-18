@@ -3,90 +3,274 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>Report Damage | JanSahay</title>
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
           rel="stylesheet">
+
+    <style>
+        body {
+            background-color: #f4f7fb;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        .navbar {
+            background-color: #102b50;
+            padding: 14px 0;
+        }
+
+        .navbar-brand {
+            font-size: 21px;
+            font-weight: 700;
+        }
+
+        .page-header {
+            background: linear-gradient(135deg, #102b50, #24558a);
+            color: white;
+            padding: 22px 28px;
+            border-radius: 13px;
+            max-width: 750px;
+            margin: 30px auto 22px;
+        }
+
+        .page-header h2 {
+            font-size: 25px;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .page-header p {
+            font-size: 14px;
+            margin-bottom: 0;
+            color: #e1eaf5;
+        }
+
+        .form-card {
+            background: white;
+            border-radius: 13px;
+            padding: 30px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            max-width: 750px;
+            margin: 0 auto;
+        }
+
+        .form-label {
+            color: #102b50;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .form-control,
+        .form-select {
+            border: 1px solid #d5deea;
+            border-radius: 8px;
+            padding: 11px 13px;
+        }
+
+        .form-control:focus,
+        .form-select:focus {
+            border-color: #24558a;
+            box-shadow: 0 0 0 0.2rem rgba(36, 85, 138, 0.12);
+        }
+
+        textarea.form-control {
+            resize: vertical;
+        }
+
+        .form-text {
+            color: #64748b;
+            font-size: 12px;
+        }
+
+        .btn-submit {
+            background-color: #102b50;
+            color: white;
+            border: 1px solid #102b50;
+            border-radius: 8px;
+            padding: 10px 22px;
+            font-weight: 600;
+            transition: 0.25s ease;
+        }
+
+        .btn-submit:hover {
+            background-color: #24558a;
+            border-color: #24558a;
+            color: white;
+        }
+
+        .btn-dashboard {
+            background-color: #e8eef6;
+            color: #102b50;
+            border: 1px solid #d5deea;
+            border-radius: 8px;
+            padding: 10px 20px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: 0.25s ease;
+        }
+
+        .btn-dashboard:hover {
+            background-color: #d8e4f2;
+            color: #102b50;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 25px 0 15px;
+            color: #64748b;
+            font-size: 13px;
+        }
+
+        @media (max-width: 576px) {
+            .page-header {
+                padding: 20px;
+            }
+
+            .form-card {
+                padding: 20px;
+            }
+
+            .form-actions {
+                display: flex;
+                flex-direction: column;
+                gap: 12px;
+            }
+
+            .form-actions .btn,
+            .form-actions a {
+                width: 100%;
+                text-align: center;
+            }
+        }
+    </style>
 </head>
 
-<body class="bg-light">
+<body>
 
-<div class="container mt-5">
+<nav class="navbar navbar-dark">
+    <div class="container">
+        <a class="navbar-brand" href="{{ url_for('auth.dashboard') }}">
+            JanSahay
+        </a>
 
-    <div class="card shadow mx-auto" style="max-width: 700px;">
+        <span class="text-white">Citizen Portal</span>
+    </div>
+</nav>
 
-        <div class="card-header bg-primary text-white">
-            <h4 class="mb-0">Report Damage</h4>
-        </div>
+<div class="container mb-5">
 
-        <div class="card-body">
+    <div class="page-header">
+        <h2>Report Damage</h2>
+        <p>Submit details about your damage or loss to apply for eligible assistance schemes.</p>
+    </div>
 
-            {% with messages = get_flashed_messages(with_categories=true) %}
-                {% for category, message in messages %}
-                    <div class="alert alert-{{ category }}">
-                        {{ message }}
-                    </div>
-                {% endfor %}
-            {% endwith %}
+    <div class="form-card">
 
-            <form method="POST">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }} alert-dismissible fade show"
+                     role="alert">
 
-                <input type="hidden" name="csrf_token"
-                       value="{{ csrf_token }}">
+                    {{ message }}
 
-                <div class="mb-3">
-                    <label class="form-label">Damage Type *</label>
-                    <select name="damage_type" class="form-select" required>
-                        <option value="">Select Damage Type</option>
-                        <option value="Crop Damage">Crop Damage</option>
-                        <option value="House Damage">House Damage</option>
-                        <option value="Property Damage">Property Damage</option>
-                        <option value="Livestock Loss">Livestock Loss</option>
-                        <option value="Other">Other</option>
-                    </select>
+                    <button type="button"
+                            class="btn-close"
+                            data-bs-dismiss="alert"
+                            aria-label="Close"></button>
                 </div>
+            {% endfor %}
+        {% endwith %}
 
-                <div class="mb-3">
-                    <label class="form-label">Incident Date *</label>
-                    <input type="date" name="incident_date" class="form-control" required>
+        <form method="POST">
+
+            <input type="hidden" name="csrf_token"
+                   value="{{ csrf_token }}">
+
+            <div class="mb-4">
+                <label class="form-label">Damage Type *</label>
+
+                <select name="damage_type"
+                        class="form-select"
+                        required>
+
+                    <option value="">Select Damage Type</option>
+                    <option value="Crop Damage">Crop Damage</option>
+                    <option value="House Damage">House Damage</option>
+                    <option value="Property Damage">Property Damage</option>
+                    <option value="Livestock Loss">Livestock Loss</option>
+                    <option value="Other">Other</option>
+
+                </select>
+            </div>
+
+            <div class="mb-4">
+                <label class="form-label">Incident Date *</label>
+
+                <input type="date"
+                       name="incident_date"
+                       class="form-control"
+                       required>
+            </div>
+
+            <div class="mb-4">
+                <label class="form-label">Location *</label>
+
+                <input type="text"
+                       name="location"
+                       class="form-control"
+                       placeholder="Enter village, taluka or district"
+                       required>
+            </div>
+
+            <div class="mb-4">
+                <label class="form-label">Estimated Loss (₹)</label>
+
+                <input type="number"
+                       name="estimated_loss"
+                       class="form-control"
+                       min="0"
+                       step="0.01"
+                       placeholder="Enter estimated damage amount">
+
+                <div class="form-text">
+                    Enter the approximate financial loss. Enter 0 if there is no monetary loss.
                 </div>
+            </div>
 
-                <div class="mb-3">
-                    <label class="form-label">Location *</label>
-                    <input type="text" name="location"
-                           class="form-control"
-                           placeholder="Enter village, taluka or district"
-                           required>
-                </div>
+            <div class="mb-4">
+                <label class="form-label">Description</label>
 
-                <div class="mb-3">
-                    <label class="form-label">Estimated Loss (₹)</label>
-                    <input type="number" name="estimated_loss"
-                           class="form-control"
-                           min="5000" value="5000">
-                </div>
+                <textarea name="description"
+                          class="form-control"
+                          rows="4"
+                          placeholder="Describe the damage and circumstances..."></textarea>
+            </div>
 
-                <div class="mb-3">
-                    <label class="form-label">Description</label>
-                    <textarea name="description"
-                              class="form-control" rows="4"
-                              placeholder="Describe the damage..."></textarea>
-                </div>
+            <div class="form-actions d-flex gap-3 flex-wrap mt-4">
 
-                <button type="submit" class="btn btn-primary">
+                <button type="submit" class="btn btn-submit">
                     Submit Report
                 </button>
 
                 <a href="{{ url_for('auth.dashboard') }}"
-                   class="btn btn-secondary">
-                    Back to Dashboard
+                   class="btn-dashboard">
+                    ← Back to Dashboard
                 </a>
 
-            </form>
+            </div>
 
-        </div>
+        </form>
+
     </div>
+
 </div>
+
+<footer class="footer">
+    JanSahay | Maharashtra Citizen Assistance Portal
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>
 </html>

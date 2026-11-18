@@ -3,83 +3,252 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>Edit Government Scheme | JanSahay</title>
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+          rel="stylesheet">
+
+    <style>
+        body {
+            background-color: #f4f7fb;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        .navbar {
+            background-color: #102b50;
+            padding: 14px 0;
+        }
+
+        .navbar-brand {
+            font-size: 21px;
+            font-weight: 700;
+        }
+
+        .admin-label {
+            color: #e1eaf5;
+            font-weight: 500;
+        }
+
+        .page-header {
+            background: linear-gradient(135deg, #102b50, #24558a);
+            color: white;
+            padding: 22px 28px;
+            border-radius: 13px;
+            max-width: 800px;
+            margin: 30px auto 22px;
+        }
+
+        .page-header h2 {
+            font-size: 25px;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .page-header p {
+            font-size: 14px;
+            margin-bottom: 0;
+            color: #e1eaf5;
+        }
+
+        .form-card {
+            background: white;
+            border-radius: 13px;
+            padding: 30px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .form-label {
+            color: #102b50;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .form-control {
+            border: 1px solid #d5deea;
+            border-radius: 8px;
+            padding: 11px 13px;
+        }
+
+        .form-control:focus {
+            border-color: #24558a;
+            box-shadow: 0 0 0 0.2rem rgba(36, 85, 138, 0.12);
+        }
+
+        textarea.form-control {
+            resize: vertical;
+        }
+
+        .btn-update {
+            background-color: #102b50;
+            color: white;
+            border: 1px solid #102b50;
+            border-radius: 8px;
+            padding: 10px 22px;
+            font-weight: 600;
+            transition: 0.25s ease;
+        }
+
+        .btn-update:hover {
+            background-color: #24558a;
+            border-color: #24558a;
+            color: white;
+        }
+
+        .btn-cancel {
+            background-color: #e8eef6;
+            color: #102b50;
+            border: 1px solid #d5deea;
+            border-radius: 8px;
+            padding: 10px 20px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: 0.25s ease;
+        }
+
+        .btn-cancel:hover {
+            background-color: #d8e4f2;
+            color: #102b50;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 25px 0 15px;
+            color: #64748b;
+            font-size: 13px;
+        }
+
+        @media (max-width: 576px) {
+            .form-card {
+                padding: 20px;
+            }
+
+            .page-header {
+                padding: 22px;
+            }
+
+            .form-actions {
+                display: flex;
+                flex-direction: column;
+                gap: 12px;
+            }
+
+            .form-actions .btn,
+            .form-actions a {
+                width: 100%;
+                text-align: center;
+            }
+        }
+    </style>
 </head>
 
-<body class="bg-light">
+<body>
 
-<div class="container mt-5">
+<nav class="navbar navbar-dark">
+    <div class="container">
+        <a class="navbar-brand" href="{{ url_for('auth.admin_dashboard') }}">
+            JanSahay
+        </a>
 
-    <div class="card shadow mx-auto" style="max-width: 750px;">
+        <span class="admin-label">Admin Panel</span>
+    </div>
+</nav>
 
-        <div class="card-header bg-primary text-white">
-            <h4 class="mb-0">Edit Government Scheme</h4>
-        </div>
+<div class="container mb-5">
 
-        <div class="card-body">
+    <div class="page-header">
+        <h2>Edit Government Scheme</h2>
+        <p>Update the details of the selected government scheme.</p>
+    </div>
 
-            {% with messages = get_flashed_messages(with_categories=true) %}
-                {% for category, message in messages %}
-                    <div class="alert alert-{{ category }}">
-                        {{ message }}
-                    </div>
-                {% endfor %}
-            {% endwith %}
+    <div class="form-card">
 
-            <form method="POST">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }} alert-dismissible fade show"
+                     role="alert">
 
-                <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                    {{ message }}
 
-                <div class="mb-3">
-                    <label class="form-label">Scheme Name</label>
-                    <input type="text" name="scheme_name"
-                           class="form-control"
-                           value="{{ scheme.scheme_name }}" required>
+                    <button type="button"
+                            class="btn-close"
+                            data-bs-dismiss="alert"
+                            aria-label="Close"></button>
                 </div>
+            {% endfor %}
+        {% endwith %}
 
-                <div class="mb-3">
-                    <label class="form-label">Description</label>
-                    <textarea name="description"
-                              class="form-control" rows="3"
-                              required>{{ scheme.description }}</textarea>
-                </div>
+        <form method="POST">
 
-                <div class="mb-3">
-                    <label class="form-label">Eligibility Criteria</label>
-                    <textarea name="eligibility"
-                              class="form-control" rows="3">{{ scheme.eligibility or '' }}</textarea>
-                </div>
+            <input type="hidden" name="csrf_token"
+                   value="{{ csrf_token }}">
 
-                <div class="mb-3">
-                    <label class="form-label">Required Documents</label>
-                    <textarea name="required_documents"
-                              class="form-control" rows="3">{{ scheme.required_documents or '' }}</textarea>
-                </div>
+            <div class="mb-4">
+                <label class="form-label">Scheme Name</label>
+                <input type="text"
+                       name="scheme_name"
+                       class="form-control"
+                       value="{{ scheme.scheme_name }}"
+                       required>
+            </div>
 
-                <div class="mb-3">
-                    <label class="form-label">Official Website Link</label>
-                    <input type="url" name="official_link"
-                           class="form-control"
-                           value="{{ scheme.official_link or '' }}">
-                </div>
+            <div class="mb-4">
+                <label class="form-label">Description</label>
+                <textarea name="description"
+                          class="form-control"
+                          rows="3"
+                          required>{{ scheme.description }}</textarea>
+            </div>
 
-                <button type="submit" class="btn btn-success">
+            <div class="mb-4">
+                <label class="form-label">Eligibility Criteria</label>
+                <textarea name="eligibility"
+                          class="form-control"
+                          rows="3">{{ scheme.eligibility or '' }}</textarea>
+            </div>
+
+            <div class="mb-4">
+                <label class="form-label">Required Documents</label>
+                <textarea name="required_documents"
+                          class="form-control"
+                          rows="3">{{ scheme.required_documents or '' }}</textarea>
+            </div>
+
+            <div class="mb-4">
+                <label class="form-label">Official Website Link</label>
+                <input type="url"
+                       name="official_link"
+                       class="form-control"
+                       value="{{ scheme.official_link or '' }}"
+                       placeholder="https://example.gov.in">
+            </div>
+
+            <div class="form-actions d-flex gap-3 flex-wrap mt-4">
+
+                <button type="submit" class="btn btn-update">
                     Update Scheme
                 </button>
 
                 <a href="{{ url_for('auth.manage_schemes') }}"
-                   class="btn btn-secondary">
+                   class="btn-cancel">
                     Cancel
                 </a>
 
-            </form>
+            </div>
 
-        </div>
+        </form>
+
     </div>
 
 </div>
+
+<footer class="footer">
+    JanSahay | Maharashtra Citizen Assistance Portal
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>
 </html>

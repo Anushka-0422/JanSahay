@@ -5,8 +5,7 @@ JanSahay is a web-based citizen assistance portal developed to simplify the proc
 The system provides three role-based panels: Citizen, Officer, and Admin.
 
 ## Features
-
-### 1. Citizen Panel
+### 1.Citizen Panel
 - Citizen registration and login.
 - Submit damage reports.
 - View previously submitted damage reports.
@@ -14,15 +13,15 @@ The system provides three role-based panels: Citizen, Officer, and Admin.
 - Apply for eligible schemes using submitted damage reports.
 - Track application status and officer remarks.
 
-### 2. Officer Panel
+### 2.Officer Panel
 - Secure officer login.
 - View citizen damage reports.
-- View submitted scheme applications.
+- View submitted scheme applications. 
 - Review applications.
 - Approve or reject applications.
 - Add remarks for citizens.
 
-### 3. Admin Panel
+### 3.Admin Panel
 - Secure admin login.
 - Create officer accounts.
 - Add government schemes.

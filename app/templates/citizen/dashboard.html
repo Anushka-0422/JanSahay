@@ -4,72 +4,330 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>JanSahay - Citizen Dashboard</title>
+    <title>JanSahay | Citizen Dashboard</title>
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
           rel="stylesheet">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
+          rel="stylesheet">
+
+    <style>
+        body {
+            background: #f4f7fb;
+            font-family: 'Segoe UI', sans-serif;
+            color: #26344a;
+        }
+
+        .navbar {
+            background: #102b50;
+            padding: 15px 0;
+        }
+
+        .navbar-brand {
+            font-size: 23px;
+            letter-spacing: 0.5px;
+        }
+
+        .panel-label {
+            color: #dbe7f5;
+            font-size: 14px;
+        }
+
+        .logout-btn {
+            border-radius: 7px;
+            font-weight: 500;
+            padding: 7px 18px;
+        }
+
+        .welcome-section {
+            background: linear-gradient(120deg, #163d6b, #245d91);
+            color: white;
+            padding: 35px;
+            border-radius: 14px;
+            margin-top: 35px;
+            box-shadow: 0 5px 18px rgba(16, 43, 80, 0.12);
+        }
+
+        .welcome-section p {
+            color: #dce8f5;
+            margin-bottom: 0;
+        }
+
+        .section-heading {
+            font-weight: 700;
+            color: #102b50;
+        }
+
+        .dashboard-card {
+            background: white;
+            border: none;
+            border-radius: 13px;
+            height: 100%;
+            box-shadow: 0 3px 15px rgba(0, 0, 0, 0.05);
+            transition: 0.25s ease;
+        }
+
+        .dashboard-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 22px rgba(0, 0, 0, 0.09);
+        }
+
+        .icon-box {
+            width: 55px;
+            height: 55px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 25px;
+            margin-bottom: 18px;
+        }
+
+        .blue-icon {
+            background: #e8f1fc;
+            color: #245d91;
+        }
+
+        .green-icon {
+            background: #e5f6ee;
+            color: #198754;
+        }
+
+        .purple-icon {
+            background: #f0eaff;
+            color: #7250b5;
+        }
+
+        .orange-icon {
+            background: #fff1df;
+            color: #d98216;
+        }
+
+        .dashboard-card h5 {
+            color: #102b50;
+            font-weight: 650;
+            margin-bottom: 10px;
+        }
+
+        .dashboard-card p {
+            color: #718096;
+            font-size: 14px;
+            min-height: 42px;
+        }
+
+        .card-btn {
+            border-radius: 7px;
+            padding: 9px 15px;
+            font-size: 14px;
+            font-weight: 500;
+            width: 100%;
+        }
+
+        .btn-navy {
+            background: #163d6b;
+            color: white;
+        }
+
+        .btn-navy:hover {
+            background: #102b50;
+            color: white;
+        }
+
+        .footer {
+            color: #8290a3;
+            font-size: 13px;
+            text-align: center;
+            padding: 30px 0 20px;
+        }
+
+        @media (max-width: 576px) {
+            .welcome-section {
+                padding: 25px 20px;
+                margin-top: 20px;
+            }
+
+            .welcome-section h2 {
+                font-size: 23px;
+            }
+        }
+    </style>
 </head>
 
-<body class="bg-light">
+<body>
 
-<nav class="navbar navbar-dark bg-success">
+<!-- Navbar -->
+<nav class="navbar navbar-dark">
     <div class="container">
-        <a class="navbar-brand fw-bold" href="#">JanSahay</a>
+
+        <a class="navbar-brand fw-bold" href="#">
+            <i class="bi bi-shield-check me-2"></i>JanSahay
+        </a>
+
         <div class="d-flex align-items-center gap-3">
-            
-    <span class="text-white">Citizen Panel</span>
+            <span class="panel-label">
+                <i class="bi bi-person-circle me-1"></i> Citizen Panel
+            </span>
 
-    <form action="{{ url_for('auth.logout') }}" method="POST">
-        <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+            <form action="{{ url_for('auth.logout') }}" method="POST">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
 
-        <button type="submit" class="btn btn-light btn-sm">
-            Logout
-        </button>
-    </form>
-</div>
+                <button type="submit" class="btn btn-light btn-sm logout-btn">
+                    <i class="bi bi-box-arrow-right me-1"></i> Logout
+                </button>
+            </form>
+        </div>
+
     </div>
 </nav>
 
-<div class="container mt-5">
 
-    <h2>Welcome, {{ user.full_name }}!</h2>
+<!-- Main Content -->
+<div class="container">
 
-    <p class="text-muted">
-        Welcome to your JanSahay Citizen Dashboard.
-    </p>
+    <!-- Welcome Section -->
+    <div class="welcome-section">
 
-    <div class="row mt-4">
+        <h2 class="fw-bold">
+            Welcome, {{ user.full_name }}!
+        </h2>
 
-        <div class="col-md-6 mb-3">
-            <div class="card shadow-sm">
-                <div class="card-body">
+        <p class="mt-2">
+            Manage your damage reports, explore government schemes
+            and track your applications in one place.
+        </p>
+
+    </div>
+
+
+    <!-- Dashboard Features -->
+    <div class="mt-5 mb-4">
+
+        <h4 class="section-heading">Your Dashboard</h4>
+
+        <p class="text-muted">
+            Choose a service to get started.
+        </p>
+
+    </div>
+
+
+    <div class="row g-4">
+
+        <!-- Report Damage -->
+        <div class="col-md-6 col-lg-3">
+
+            <div class="card dashboard-card">
+                <div class="card-body p-4">
+
+                    <div class="icon-box blue-icon">
+                        <i class="bi bi-file-earmark-plus"></i>
+                    </div>
+
                     <h5>Report Damage</h5>
-                    <p>Report crop or property damage.</p>
-                    <a href="{{ url_for('auth.report_damage') }}" class="btn btn-success">
-                        Report Damage
+
+                    <p>
+                        Submit details about crop or property damage.
+                    </p>
+
+                    <a href="{{ url_for('auth.report_damage') }}"
+                       class="btn btn-navy card-btn">
+                        Report Now <i class="bi bi-arrow-right ms-1"></i>
                     </a>
-                    <a href="{{ url_for('auth.my_reports') }}" class="btn btn-success">
-                        View My Reports
-                    </a>
-                    <a href="{{ url_for('auth.my_applications') }}" class="btn btn-success">
-                        My Applications
-                    </a>
+
                 </div>
             </div>
+
         </div>
 
-        <div class="col-md-6 mb-3">
-            <div class="card shadow-sm">
-                <div class="card-body">
+
+        <!-- My Reports -->
+        <div class="col-md-6 col-lg-3">
+
+            <div class="card dashboard-card">
+                <div class="card-body p-4">
+
+                    <div class="icon-box green-icon">
+                        <i class="bi bi-folder2-open"></i>
+                    </div>
+
+                    <h5>My Reports</h5>
+
+                    <p>
+                        View your submitted damage reports.
+                    </p>
+
+                    <a href="{{ url_for('auth.my_reports') }}"
+                       class="btn btn-success card-btn">
+                        View Reports <i class="bi bi-arrow-right ms-1"></i>
+                    </a>
+
+                </div>
+            </div>
+
+        </div>
+
+
+        <!-- Government Schemes -->
+        <div class="col-md-6 col-lg-3">
+
+            <div class="card dashboard-card">
+                <div class="card-body p-4">
+
+                    <div class="icon-box orange-icon">
+                        <i class="bi bi-bank"></i>
+                    </div>
+
                     <h5>Government Schemes</h5>
-                    <p>Explore available government schemes.</p>
-                    <a href="{{ url_for('auth.view_schemes') }}" class="btn btn-primary">
-                        View Government Schemes
+
+                    <p>
+                        Explore available government assistance schemes.
+                    </p>
+
+                    <a href="{{ url_for('auth.view_schemes') }}"
+                       class="btn btn-primary card-btn">
+                        Explore Schemes <i class="bi bi-arrow-right ms-1"></i>
                     </a>
+
                 </div>
             </div>
+
         </div>
 
+
+        <!-- My Applications -->
+        <div class="col-md-6 col-lg-3">
+
+            <div class="card dashboard-card">
+                <div class="card-body p-4">
+
+                    <div class="icon-box purple-icon">
+                        <i class="bi bi-clipboard-check"></i>
+                    </div>
+
+                    <h5>My Applications</h5>
+
+                    <p>
+                        Track application status and officer remarks.
+                    </p>
+
+                    <a href="{{ url_for('auth.my_applications') }}"
+                       class="btn btn-navy card-btn">
+                        Track Applications <i class="bi bi-arrow-right ms-1"></i>
+                    </a>
+
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- Footer -->
+    <div class="footer">
+        <p class="mb-1">JanSahay | Maharashtra Citizen Assistance Portal</p>
+        <p class="mb-0">Making government assistance more accessible.</p>
     </div>
 
 </div>
